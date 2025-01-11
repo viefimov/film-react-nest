@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { FilmsRepository } from '../repository/films/films.repository';
 import { OrderInfoDTO, TicketDTO } from './dto/order.dto';
@@ -17,7 +18,7 @@ export class OrderService {
     for (const ticket of tickets) {
       const film = await this.filmsRepository.findFilmById(ticket.film);
       if (!film) {
-        throw new BadRequestException('Фильм не найден');
+        throw new NotFoundException(`Фильм не найден`);
       }
       film.toObject();
       const schedule = await this.filmsRepository.findFilmSchedule(

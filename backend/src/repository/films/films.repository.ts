@@ -37,7 +37,11 @@ export class FilmsRepository {
   }
 
   async findFilmSchedule(filmId: string, session: string) {
-    const film = (await this.findFilmById(filmId)).toObject();
+    const film = await this.findFilmById(filmId);
+    if (!film) {
+      throw new NotFoundException(`Фильм не найден`);
+    }
+    film.toObject();
     const scheduleIndex = film.schedule.findIndex(
       (a: { id: string }) => a.id === session,
     );
