@@ -10,7 +10,11 @@ export class FilmsService {
   }
 
   async getScheduleFilm(id: string) {
-    const film = (await this.filmsRepository.findFilmById(id)).toObject();
+    const film = await this.filmsRepository.findFilmById(id);
+    if (!film) {
+      throw new Error('Фильм не найден');
+    }
+    film.toObject();
     return {
       total: film.schedule.length,
       items: film.schedule,

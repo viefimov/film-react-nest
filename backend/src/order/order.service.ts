@@ -15,9 +15,11 @@ export class OrderService {
   ): Promise<{ items: TicketDTO[]; total: number }> {
     const tickets = orderData.tickets;
     for (const ticket of tickets) {
-      const film = (
-        await this.filmsRepository.findFilmById(ticket.film)
-      ).toObject();
+      const film = await this.filmsRepository.findFilmById(ticket.film);
+      if (!film) {
+        throw new BadRequestException('Фильм не найден');
+      }
+      film.toObject();
       const schedule = await this.filmsRepository.findFilmSchedule(
         ticket.film,
         ticket.session,

@@ -29,17 +29,18 @@ export class FilmsRepository {
   }
 
   async findFilmById(id: string): Promise<FilmDocument> {
-    try {
-      const film = await this.filmModel.findOne({ id });
-      return film;
-    } catch {
+    const film = await this.filmModel.findOne({ id });
+    if (!film) {
       throw new NotFoundException(`Фильм не найден`);
     }
+    return film;
   }
 
   async findFilmSchedule(filmId: string, session: string) {
     const film = (await this.findFilmById(filmId)).toObject();
-    const scheduleIndex = film.schedule.findIndex((a: { id: string; }) => a.id === session);
+    const scheduleIndex = film.schedule.findIndex(
+      (a: { id: string }) => a.id === session,
+    );
     return scheduleIndex;
   }
 }

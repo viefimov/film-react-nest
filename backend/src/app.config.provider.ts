@@ -1,4 +1,4 @@
-import {ConfigModule} from "@nestjs/config";
+import { ConfigModule } from '@nestjs/config';
 
 export const appConfig = process.env;
 
