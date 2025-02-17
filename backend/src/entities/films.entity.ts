@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
-import { Schedule } from './schedule.entity';
+import { Schedule } from './schedules.entity';
 
-@Entity()
-export class Film {
+@Entity('films')
+export class Films {
   @PrimaryColumn()
   id: string;
 

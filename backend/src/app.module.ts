@@ -10,8 +10,8 @@ import { OrderController } from './order/order.controller';
 import { OrderService } from './order/order.service';
 import { FilmsService } from './films/films.service';
 import { FilmsRepository } from './repository/films/films.repository';
-import { Film } from './entities/film.entity';
-import { Schedule } from './entities/schedule.entity';
+import { Films } from './entities/films.entity';
+import { Schedule } from './entities/schedules.entity';
 import { configProvider } from './app.config.provider';
 
 @Module({
@@ -25,7 +25,7 @@ import { configProvider } from './app.config.provider';
       renderPath: '/content/afisha/',
     }),
     DatabaseModule,
-    TypeOrmModule.forFeature([Film, Schedule]),
+    TypeOrmModule.forFeature([Films, Schedule]),
   ],
   controllers: [FilmsController, OrderController],
   providers: [configProvider, OrderService, FilmsService, FilmsRepository],

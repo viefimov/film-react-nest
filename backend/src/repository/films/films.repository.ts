@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Film } from '../../entities/film.entity';
+import { Films } from '../../entities/films.entity';
 import { FilmDto } from '../../films/dto/films.dto';
 
 @Injectable()
 export class FilmsRepository {
   constructor(
-    @InjectRepository(Film)
-    private filmRepository: Repository<Film>,
+    @InjectRepository(Films)
+    private filmRepository: Repository<Films>,
   ) {}
 
   async findAllFilms(): Promise<{ total: number; items: FilmDto[] }> {
@@ -32,7 +32,7 @@ export class FilmsRepository {
     };
   }
 
-  async findFilmById(id: string): Promise<Film> {
+  async findFilmById(id: string): Promise<Films> {
     const film = await this.filmRepository.findOne({
       where: { id },
       relations: ['schedule'],
@@ -49,5 +49,9 @@ export class FilmsRepository {
       (a: { id: string }) => a.id === session,
     );
     return scheduleIndex;
+  }
+
+  async saveFilm(film: Films) {
+    return await this.filmRepository.save(film);
   }
 }

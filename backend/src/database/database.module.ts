@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Film } from '../entities/film.entity';
-import { Schedule } from '../entities/schedule.entity';
+import { Films } from '../entities/films.entity';
+import { Schedule } from '../entities/schedules.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
@@ -15,8 +15,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get<string>('DATABASE_USERNAME', 'viefimov'),
         password: configService.get<string>('DATABASE_PASSWORD', 'slaVa3289'),
         database: configService.get<string>('DATABASE_NAME', 'film_pg'),
-        entities: [Film, Schedule],
-        synchronize: true,
+        entities: [Films, Schedule],
+        synchronize: false,
       }),
       inject: [ConfigService],
     }),

@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryColumn, ManyToOne } from 'typeorm';
-import { Film } from './film.entity';
+import { Films } from './films.entity';
 
-@Entity()
+@Entity('schedules')
 export class Schedule {
   @PrimaryColumn()
   id: string;
@@ -24,6 +24,6 @@ export class Schedule {
   @Column('text', { array: true, default: () => 'ARRAY[]::text[]' })
   taken: string[];
 
-  @ManyToOne(() => Film, (film) => film.schedule, { onDelete: 'CASCADE' })
-  film: Film;
+  @ManyToOne(() => Films, (film) => film.schedule, { onDelete: 'CASCADE' })
+  film: Films;
 }

@@ -31,7 +31,7 @@ create table public.schedules
     rows     integer                         not null,
     seats    integer                         not null,
     price    double precision                not null,
-    taken    text                            not null,
+    taken    text[] default ARRAY[]::text[] not null,
     "filmId" uuid
         constraint "FK_1c2f5e637713a429f4854024a76"
             references public.films
