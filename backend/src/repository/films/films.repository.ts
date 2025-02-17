@@ -1,16 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Film } from '../../entities/film.entity';
 import { FilmDto } from '../../films/dto/films.dto';
-import { Film, FilmDocument } from '../../films/film.schema';
 
 @Injectable()
 export class FilmsRepository {
-  constructor(@InjectModel(Film.name) private filmModel: Model<Film>) {}
+  constructor(
+    @InjectRepository(Film)
+    private filmRepository: Repository<Film>,
+  ) {}
 
   async findAllFilms(): Promise<{ total: number; items: FilmDto[] }> {
-    const films = await this.filmModel.find().lean();
-    const total = await this.filmModel.countDocuments({});
+    const [films, total] = await this.filmRepository.findAndCount({
+      relations: ['schedule'],
+    });
     return {
       total,
       items: films.map((film) => ({
@@ -28,20 +32,19 @@ export class FilmsRepository {
     };
   }
 
-  async findFilmById(id: string): Promise<FilmDocument> {
-    const film = await this.filmModel.findOne({ id });
+  async findFilmById(id: string): Promise<Film> {
+    const film = await this.filmRepository.findOne({
+      where: { id },
+      relations: ['schedule'],
+    });
     if (!film) {
       throw new NotFoundException(`Фильм не найден`);
     }
     return film;
   }
 
-  async findFilmSchedule(filmId: string, session: string) {
+  async findFilmSchedule(filmId: string, session: string): Promise<number> {
     const film = await this.findFilmById(filmId);
-    if (!film) {
-      throw new NotFoundException(`Фильм не найден`);
-    }
-    film.toObject();
     const scheduleIndex = film.schedule.findIndex(
       (a: { id: string }) => a.id === session,
     );
