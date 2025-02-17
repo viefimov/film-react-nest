@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -20,7 +19,7 @@ export class OrderService {
       if (!film) {
         throw new NotFoundException(`Фильм не найден`);
       }
-      film.toObject();
+
       const schedule = await this.filmsRepository.findFilmSchedule(
         ticket.film,
         ticket.session,
@@ -36,12 +35,18 @@ export class OrderService {
   }
 
   async updateSeats(filmId: string, scheduleIndex: number, place: string) {
+    // Load film with schedules
     const film = await this.filmsRepository.findFilmById(filmId);
-    const takenPlaces = `schedule.${scheduleIndex.toString()}.taken`;
-    try {
-      await film.updateOne({ $push: { [takenPlaces]: place } });
-    } catch (error) {
-      new ConflictException('Ошибка при сохранении места');
+    if (!film.schedule || film.schedule.length <= scheduleIndex) {
+      throw new NotFoundException('Расписание не найдено');
     }
+
+    const scheduleItem = film.schedule[scheduleIndex];
+    if (!Array.isArray(scheduleItem.taken)) {
+      scheduleItem.taken = [];
+    }
+    scheduleItem.taken.push(place);
+
+    return await this.filmsRepository.saveFilm(film);
   }
 }
