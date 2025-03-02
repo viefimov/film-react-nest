@@ -10,4 +10,4 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm i --omit=dev
 COPY --from=builder /app/dist ./dist
-CMD ["node", "dist/main"]
+CMD ["sh", "-c", "sleep 10 && node dist/main"]

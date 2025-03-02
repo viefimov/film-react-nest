@@ -9,6 +9,8 @@ services:
     image: ghcr.io/viefimov/film-react-nest-frontend:latest
     volumes:
       - frontend_build:/app/dist
+    env_file:
+      - frontend/.env
     # Команда для сборки и копирования собранных файлов в volume
     command: ["sh", "-c", "npm run build && cp -r dist/* /app/dist"]
 
@@ -24,6 +26,9 @@ services:
       - postgres
     networks:
       - app-network
+    env_file:
+      - backend/.env
+    restart: unless-stopped
 
   # Nginx-сервер для раздачи фронтенда и проксирования запросов к бэкенду
   nginx:
@@ -32,13 +37,15 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/viefimov/film-react-nest-nginx:latest
     ports:
-      - "80:80"
+      - 80:80
+      - 443:443
     volumes:
       - frontend_build:/usr/share/nginx/html
     depends_on:
       - backend
     networks:
       - app-network
+    restart: always
 
   # PostgreSQL база данных
   postgres:
@@ -76,4 +83,3 @@ volumes:
 
 networks:
   app-network:
-    name: mynetwork

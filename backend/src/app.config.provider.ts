@@ -8,7 +8,7 @@ export const configProvider = {
   useValue: <AppConfig>{
     database: {
       driver: process.env.DATABASE_DRIVER || 'postgres',
-      host: process.env.DATABASE_HOST || 'localhost',
+      host: process.env.DATABASE_HOST,
       port: Number(process.env.DATABASE_PORT) || 5432,
       username: process.env.DATABASE_USERNAME || 'viefimov',
       password: process.env.DATABASE_PASSWORD || 'slaVa3289',
