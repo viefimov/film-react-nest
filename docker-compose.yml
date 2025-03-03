@@ -2,49 +2,33 @@ version: '3.8'
 
 services:
   # Сервис сборки фронтенда: собирает проект и копирует собранный код в volume
+  backend:
+    image: 'ghcr.io/${OWNER}/film-react-nest/backend:latest'
+    container_name: backend
+    depends_on:
+      - postgres
+    networks:
+      - web
+    env_file:
+      - backend/.env
+    restart: unless-stopped
+  
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: ghcr.io/viefimov/film-react-nest-frontend:latest
+    image: 'ghcr.io/${OWNER}/film-react-nest/frontend:latest'
+    container_name: frontend
+    networks:
+      - web
     volumes:
       - frontend_build:/app/dist
     env_file:
       - frontend/.env
     # Команда для сборки и копирования собранных файлов в volume
-    command: ["sh", "-c", "npm run build && cp -r dist/* /app/dist"]
+
 
   # Бэкенд. Обратите внимание, что запускается продакшен-версия из папки dist.
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    image: ghcr.io/viefimov/film-react-nest-backend:latest
-    ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
-    networks:
-      - app-network
-    env_file:
-      - backend/.env
-    restart: unless-stopped
+
 
   # Nginx-сервер для раздачи фронтенда и проксирования запросов к бэкенду
-  nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    image: ghcr.io/viefimov/film-react-nest-nginx:latest
-    ports:
-      - 80:80
-    volumes:
-      - frontend_build:/usr/share/nginx/html
-    depends_on:
-      - backend
-    networks:
-      - app-network
-    restart: always
 
   # PostgreSQL база данных
   postgres:
@@ -74,6 +58,20 @@ services:
       - postgres
     networks:
       - app-network
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: ghcr.io/viefimov/film-react-nest-nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - frontend_build:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - app-network
+    restart: always
 
 volumes:
   frontend_build:
