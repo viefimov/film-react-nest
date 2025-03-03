@@ -65,7 +65,7 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./backend/public/content/afisha:/usr/share/nginx/html/content/afisha
+      - ./backend/public/content/afisha:/var/www/frontend/content/afisha:ro
       - frontend_build:/var/www/frontend
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
