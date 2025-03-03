@@ -38,7 +38,6 @@ services:
     image: ghcr.io/viefimov/film-react-nest-nginx:latest
     ports:
       - 80:80
-      - 443:443
     volumes:
       - frontend_build:/usr/share/nginx/html
     depends_on:
