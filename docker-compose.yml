@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # Сервис сборки фронтенда: собирает проект и копирует собранный код в volume
   backend:
-    image: 'ghcr.io/${OWNER}/film-react-nest/backend:latest'
+    image: 'ghcr.io/viefimov/film-react-nest/backend:latest'
     container_name: backend
     depends_on:
       - postgres
@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
   
   frontend:
-    image: 'ghcr.io/${OWNER}/film-react-nest/frontend:latest'
+    image: 'ghcr.io/viefimov/film-react-nest/frontend:latest'
     container_name: frontend
     networks:
       - web
